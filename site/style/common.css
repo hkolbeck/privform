@@ -1,4 +1,114 @@
+@font-face {
+    font-family: 'montserrat';
+    src: url('/fonts/montserrat-regular-webfont.woff2') format('woff2'),
+    url('/fonts/montserrat-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'montserrat';
+    src: url('/fonts/montserrat-semibold-webfont.woff2') format('woff2'),
+    url('/fonts/montserrat-semibold-webfont.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
 body {
     margin: 0;
     background-color: #FFB6FD;
+    font-family: "montserrat", sans-serif;
+    font-weight: normal;
+}
+
+#header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 50px;
+    border-bottom: 2px solid #120C78;
+    display: grid;
+    grid-template-areas: "l t e";
+}
+
+#title-wrapper {
+    grid-area: t;
+    justify-self: center;
+    display: flex;
+    flex-direction: column;
+}
+
+#title {
+    padding-top: 5px;
+    height: 40px;
+    width: auto;
+}
+
+#email-wrapper {
+    grid-area: e;
+    align-self: center;
+    width: 100%;
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+#email {
+    padding: 5px;
+    width: 40px;
+    height: auto;
+}
+
+#logo-wrapper {
+    grid-area: l;
+    align-self: start;
+    justify-self: center;
+    width: 100%;
+}
+
+#logo {
+    width: 40px;
+    height: 40px;
+    padding: 5px;
+}
+
+#content {
+    position: fixed;
+    top: 50px;
+    padding: 15px 20vw;
+}
+
+@media screen and (max-width: 600px) {
+    #content {
+        padding: 15px 10px;
+    }
+}
+
+.btn {
+    border-radius: 10px;
+    background-color: #F572F2;
+    border: 2px solid #120C78;
+    color: #120C78;
+    font-weight: 500;
+    font-size: 1.5rem;
+    margin: 5px;
+}
+
+.btn:hover {
+    box-shadow: 0 0 10px #120C78;
+}
+
+.entry-label {
+    font-weight: 500;
+    font-size: 1.5rem;
+    padding-right: 5px;
+}
+
+.copy-button {
+    width: 20px;
+    height: auto;
+    margin: 5px;
+}
+
+.copy-button:hover {
+    filter: drop-shadow(0 0 3px #120C78);
 }

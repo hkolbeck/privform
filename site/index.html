@@ -4,14 +4,51 @@
     <meta charset="UTF-8">
     <title>PrivForm</title>
 
-    <link rel="stylesheet" href="/style/index.css"/>
     <link rel="stylesheet" href="/style/common.css"/>
+    <link rel="stylesheet" href="/style/index.css"/>
 </head>
 <body>
 <div id="header">
-    <img src="img/privform.svg"
-         alt="The PrivForm logo, a dark blue lock with a heart on the body on a light purple fields"
-    />
+    <span id="logo-wrapper">
+        <a href="https://hannah.industries">
+            <img id="logo" src="img/privform.svg"
+                 alt="The PrivForm logo, a dark blue lock with a heart on the body on a light purple fields"
+            />
+        </a>
+    </span>
+    <span id="title-wrapper">
+        <img id="title" src="img/title.svg"
+             alt="PrivForm.net in a deep blue bubble font with hearts where possible, all outlined in pink"
+        >
+    </span>
+    <span id="email-wrapper">
+        <a href="mailto:admin@privform.net">
+            <img id="email" src="img/email.svg" alt="A stylized envelope">
+        </a>
+    </span>
+</div>
+<div id="content">
+    <h1>Welcome to PrivForm.net</h1>
+    <h3>We aim to provide a way for people to collect sensitive data as securely as possible.</h3>
+    <div id="service">
+        The service is currently in a closed alpha.
+    </div>
+    <div id="explanation">
+        PrivForm.net uses a technology called <i>asymmetric encryption</i> (PGP to be exact) to ensure that the
+        responses to your forms are only unencrypted when your respondents enter them and when you read them. When
+        you're setting up a form you'll generate a <i>keypair</i>, a private key and a public key. You'll save the
+        private key file to your computer and send us the public key. When people respond, their responses will be
+        encrypted with the public key before they're sent over the internet to us, and only the private key that's never
+        been seen by anyone but you can unencrypt them.
+    </div>
+    <div id="contact">
+        To get in touch with us, email <a href="mailto:admin@privform.net">admin@PrivForm.net</a>
+    </div>
+    <div id="gh-wrapper">
+        <a href="https://github.com/hkolbeck/privform.git">
+            <img id="gh" src="img/github.svg" alt="The Github logo">
+        </a>
+    </div>
 </div>
 </body>
 </html>

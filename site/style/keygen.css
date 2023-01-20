@@ -1,0 +1,45 @@
+#pw-form {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+#pw-entry {
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+#key-display {
+    display: none;
+}
+
+.key-part-disp {
+    resize: none;
+    overflow: scroll;
+    background-color: #F572F2;
+    border: 2px solid #120C78;
+}
+
+#privkey-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+}
+
+#privkey-dl {
+    text-decoration: none;
+    padding: 5px;
+}
+
+#privkey-dl:visited {
+    text-decoration: none;
+}
+
+#fingerprint-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-content: center;
+}
+

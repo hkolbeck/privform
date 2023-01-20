@@ -1,14 +1,109 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>PrivForm</title>
     <link rel="stylesheet" href="/style/common.css"/>
+    <link rel="stylesheet" href="/style/keygen.css"/>
 
-    <script src="https://unpkg.com/browse/openpgp@5.5.0/dist/openpgp.min.js"></script>
+    <script src="src/openpgp.js"></script>
     <script src="src/crypto.js"></script>
+    <script>
+        async function onPasswordSubmit() {
+            const pwField = document.getElementById("pw-entry");
+            if (!pwField.value) {
+                return
+            }
+
+            const {privkey, pubkey, fingerprint, accessKey} = await generateKeypair(pwField.value);
+            const privkeyDl = document.getElementById("privkey-dl");
+            const pubkeyField = document.getElementById("pubkey");
+            const pubkeyFingerprint = document.getElementById("pubkey-fingerprint");
+
+            const keyObject = {
+                privkey,
+                pubkey,
+                fingerprint,
+                accessKey
+            };
+            const keyBlob = new Blob([JSON.stringify(keyObject)]);
+            privkeyDl.href = URL.createObjectURL(keyBlob)
+
+            pubkeyField.value = pubkey
+            pubkeyFingerprint.value = fingerprint.split(/(.{4})/).filter(x => x).join(' ')
+
+            const prompt = document.getElementById("pw-prompt")
+            const display = document.getElementById("key-display")
+            prompt.style.display = "none"
+            display.style.display = "block"
+        }
+
+        function copyToClipboard(elemId) {
+
+        }
+    </script>
 </head>
 <body>
+<div id="header">
+    <span id="logo-wrapper">
+        <a href="https://hannah.industries">
+            <img id="logo" src="img/privform.svg"
+                 alt="The PrivForm logo, a dark blue lock with a heart on the body on a light purple fields"
+            />
+        </a>
+    </span>
+    <span id="title-wrapper">
+        <img id="title" src="img/title.svg"
+             alt="PrivForm.net in a deep blue bubble font with hearts where possible, all outlined in pink"
+        >
+    </span>
+    <span id="email-wrapper">
+        <a href="mailto:admin@privform.net">
+            <img id="email" src="img/email.svg" alt="A stylized envelope">
+        </a>
+    </span>
+</div>
+<div id="content">
+    <div id="pw-prompt">
+        <h3>
+            Enter a strong password, and save it somewhere secure. If you lose this password your form results will not
+            be recoverable
+        </h3>
+        <form id="pw-form" onsubmit="return false">
+            <label class="entry-label" for="pw-entry">Password:</label>
+            <input id="pw-entry" type="password" autocomplete="new-password">
+            <button id="submit" class="btn" onclick="onPasswordSubmit()">Submit</button>
+        </form>
+    </div>
+    <div id="key-display">
+        <label class="entry-label" for="pubkey">Public Key</label><br/>
+        <div id="privkey-wrapper">
+            <textarea id="pubkey" class="key-part-disp" readonly cols="64" rows="10"></textarea>
+            <img class="copy-button"
+                 alt="Stylized image of a page and a copy of it"
+                 src="img/copy.svg"
+                 onclick="copyToClipboard('pubkey')"
+            >
+        </div>
+        <p>
+            Copy me and send me to <a href="mailto:admin@privform.net">admin@PrivForm.net</a>
+        </p>
 
+        <label class="entry-label" for="pubkey-fingerprint">Public Key Fingerprint</label><br/>
+        <div id="fingerprint-wrapper">
+            <textarea id="pubkey-fingerprint" class="key-part-disp" rows="1" cols="49"></textarea>
+            <img class="copy-button"
+                 alt="Stylized image of a page and a copy of it"
+                 src="img/copy.svg"
+                 onclick="copyToClipboard('pubkey-fingerprint')"
+            >
+        </div>
+        <p>
+            Share this when you share a link to your form, that way your users can be sure we're not doing something
+            sneaky with keys.
+        </p>
+        <a href="" id="privkey-dl" class="btn" download="privform-key.json">Download Private Key</a>
+    </div>
+</div>
 </body>
 </html>

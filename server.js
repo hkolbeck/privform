@@ -8,7 +8,7 @@ const fastify = require("fastify")({
     bodyLimit: 10 * 1024
 });
 
-const {Storage} = require("src/storage")
+const {Storage} = require("./src/storage")
 
 
 process.on('uncaughtException', function (exception) {
@@ -32,10 +32,14 @@ const db = new sqlite.Database(config.DB);
 const storage = new Storage(db);
 storage.init();
 
-
 fastify.setNotFoundHandler((request, reply) => {
-    console.log(`404: ${request.url}`)
     reply.sendFile("404.html")
+})
+
+fastify.setErrorHandler((error, request, reply) => {
+    console.log(`Error serving '${request.url}'`)
+    console.log(error)
+    reply.sendFile("error.html")
 })
 
 const STATIC_PATHS = {
@@ -74,7 +78,7 @@ fastify.get("/manage/*", (request, reply) => {
     reply.sendFile("manage.html")
 })
 
-fastify.get("/api/forms/:form_id", async (request, reply) => {
+fastify.get("/api/forms/:form_id", (request, reply) => {
     let formId = request.params["form_id"];
     storage.getForm(formId)
         .then(({active, pubkey, content}) => {
