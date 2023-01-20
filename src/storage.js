@@ -1,19 +1,47 @@
+const NodeCache = require("node-cache");
+
 class Storage {
     #db;
+    #idCache;
 
     constructor(db) {
         this.#db = db;
+        this.#idCache = new NodeCache({stdTTL: 10 * 60});
     }
 
-    async getForm(formId) {
+    async getFormId(formName) {
+        if (this.#idCache.has(formName)) {
+            return this.#idCache.get(formName)
+        }
+
         return new Promise((resolve, reject) => {
-            this.#db.get('SELECT active, pub_key FROM forms WHERE id = ?', [formId], (err, row) => {
+            this.#db.get('SELECT form_id FROM forms WHERE display_name = ?', [formName], (err, row) => {
                 if (err) {
                     reject(err)
                 } else if (!row) {
                     resolve(null)
                 } else {
                     resolve({active: row.active, pubkey: row.pub_key})
+                }
+            })
+        })
+    }
+
+    async getForm(formId) {
+        return new Promise((resolve, reject) => {
+            this.#db.get('SELECT active, pub_key, content, access_key, iv FROM forms WHERE id = ?', [formId], (err, row) => {
+                if (err) {
+                    reject(err)
+                } else if (!row) {
+                    resolve({active: false})
+                } else {
+                    resolve({
+                        active: row.active,
+                        pubkey: row.pub_key,
+                        content: row.content,
+                        accessKey: row.access_key,
+                        iv: row.iv
+                    })
                 }
             })
         })
@@ -37,7 +65,7 @@ class Storage {
                 if (err) {
                     reject(err)
                 } else if (!rows) {
-                    resolve([])
+                    resolve(null)
                 } else {
                     let blobs = rows.map(row => row.submission)
                     resolve(blobs)
@@ -59,7 +87,15 @@ class Storage {
     }
 
     init() {
-        this.#db.run('CREATE TABLE IF NOT EXISTS forms (id TEXT PRIMARY KEY, display_name TEXT, active BOOLEAN, pub_key BLOB NOT NULL);')
+        this.#db.run('CREATE TABLE IF NOT EXISTS forms (' +
+            'id TEXT PRIMARY KEY, ' +
+            'display_name TEXT UNIQUE, ' +
+            'active BOOLEAN, ' +
+            'pub_key BLOB NOT NULL, ' +
+            'content BLOB NOT NULL' +
+            'access_key BLOB NOT NULL ' +
+            'iv BLOB NOT NULL ' +
+            ');')
         this.#db.run('CREATE TABLE IF NOT EXISTS entries (form_id TEXT, ip TEXT, submission BLOB NOT NULL, PRIMARY KEY (form_id, ip));')
     }
 }
