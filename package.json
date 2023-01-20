@@ -1,0 +1,30 @@
+{
+  "name": "privform",
+  "version": "0.0.1",
+  "description": "Privacy-oriented forms",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@fastify/compress": "^6.1.0",
+    "@fastify/static": "^6.5.0",
+    "@stablelib/base64": "^1.0.1",
+    "fastify": "^4.3.0",
+    "node-cache": "^5.1.2",
+    "sqlite3": "^5.1.4",
+    "uuid": "^9.0.0"
+  },
+  "engines": {
+    "node": "16.14.2"
+  },
+  "repository": {
+    "url": "https://github.com/hkolbeck/design-host"
+  },
+  "license": "MIT",
+  "keywords": [
+    "node",
+    "glitch",
+    "express"
+  ]
+}
