@@ -1,17 +1,82 @@
-.question-wrapper {
+#content {
+    display: flex;
+    flex-direction: column;
+}
 
+#questions {
+}
+
+.question-wrapper {
+    border-radius: 15px;
+    border: 3px solid #120C78;
+    padding: 5px;
+    margin-top: 5px;
 }
 
 .question-header {
+    display: grid;
+    row-gap: 10px;
+    grid-template-columns: 15% 45% 40%;
+    grid-template-areas:
+            "tl type controls"
+            "pl pf pf"
+            "dl df df";
+}
 
+.question-controls {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    grid-area: controls;
+}
+
+.entry {
+    resize: none;
+    overflow: scroll;
+    padding: 5px;
+    border-radius: 10px;
+    border: 1px solid #120C78;
 }
 
 .prompt-entry {
+    grid-area: pf;
+}
 
+.detail-entry {
+    grid-area: df;
+}
+
+.field-label {
+    font-size: 1rem;
+    align-self: center;
+    justify-self: end;
+    margin-right: 5px;
+    font-weight: 500;
+}
+
+.prompt-label {
+    grid-area: pl;
+}
+
+.detail-label {
+    grid-area: dl;
+}
+
+.type-label {
+    grid-area: tl;
 }
 
 .type-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    grid-area: type;
+}
 
+.type {
+    padding: 4px;
+    font-size: 1rem;
 }
 
 #controls {
@@ -21,35 +86,87 @@
 }
 
 .control-button {
+    width: 30px;
+    height: auto;
+    margin: 3px;
+}
 
+.control-button:hover {
+    filter: drop-shadow(0 0 3px #120C78);
+}
+
+.question-label {
+    padding-top: 5px;
+    padding-left: 15px;
+    text-underline: black;
 }
 
 .question-content {
-
+    padding: 15px;
 }
 
 .short-text-box {
+    resize: none;
+}
 
+.long-text-box {
+    resize: none;
 }
 
 .option {
-
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 5px 0;
 }
 
-.option-type-img-wrapper {
-
-}
-
-.option-type-image {
-
+.option-image {
+    width: 15px;
+    height: auto;
+    margin: 3px;
 }
 
 .option-name-input {
 
 }
 
-#save-wrapper {
-    position: fixed;
-    bottom: 0;
-    right: 0;
+.delete-option-button {
+    background-color: rgba(0,0,0,0);
+    border: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.hover-shadow:hover {
+    filter: drop-shadow(0 0 3px #120C78);
+}
+
+#add-button {
+    background-color: rgba(0,0,0,0);
+    border: 0;
+    width: 50px;
+    height: auto;
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+}
+
+.add-button-label {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-left: 5px;
+    color: #120C78;
+}
+
+#save {
+    margin: 10px;
+    padding: 5px;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
 }

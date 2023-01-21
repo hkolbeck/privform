@@ -17,6 +17,7 @@
 body {
     margin: 0;
     background-color: #FFB6FD;
+    color: #120C78;
     font-family: "montserrat", sans-serif;
     font-weight: normal;
 }
@@ -75,11 +76,15 @@ body {
     position: fixed;
     top: 50px;
     padding: 15px 20vw;
+    height: calc(100vh - 80px);
+    width: 60vw;
+    overflow-y: scroll;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 800px) {
     #content {
-        padding: 15px 10px;
+        padding: 15px 2vw;
+        width: 96vw;
     }
 }
 

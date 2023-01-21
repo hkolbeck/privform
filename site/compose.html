@@ -102,6 +102,7 @@
 
             const textarea = document.getElementById(`${questionId}-prompt`)
             questionList[idx].prompt = textarea.value
+
         }
 
         function updateDesc(questionId) {
@@ -128,6 +129,16 @@
 
             let optionInput = document.getElementById(optionId);
             options[optionIdx].value = optionInput.value
+        }
+
+        function deleteOption(questionId, type, optionId) {
+            let idx = findQuestion(questionId)
+            if (idx < 0) {
+                return
+            }
+
+            questionList[idx].fields[type] = questionList[idx].fields[type].filter(o => o.id !== optionId)
+            renderQuestions()
         }
 
         function findOption(options, optionId) {
@@ -159,39 +170,41 @@
             outer.classList.add("question-wrapper")
             outer.innerHTML = `<div class="${question.id}-inner-wrapper">
                 <div class="question-header">
-                    <label for="${question.id}-prompt" class="entry-label">Prompt:</label>
-                    <textarea id="${question.id}-prompt"
-                              class="prompt-entry"
-                              rows="3"
-                              cols="36"
-                              wrap="soft"
-                              placeholder="Question you'd like answered"
-                              onchange="updatePrompt('${question.id}')"></textarea>
-                    <br/>
-                    <label for="${question.id}-detail" class="entry-label">Details:</label>
-                    <textarea id="${question.id}-detail"
-                              class="prompt-entry"
-                              rows="5"
-                              cols="36"
-                              wrap="soft"
-                              placeholder="Details about the question, if needed"
-                              onchange="updateDesc('${question.id}')"></textarea>
-                    <br/>
-                    <div class="type-wrapper">
-                        <select id="${question.id}-type" onselect="selectType('${question.id}')">
-                            <option value="short">Short Answer</option>
-                            <option value="long">Paragraph</option>
-                            <option value="radio">Radio Buttons</option>
-                            <option value="check">Checkmarks</option>
-                        </select>
-                    </div>
                     <div class="question-controls">
                         <img class="control-button" src="img/move-up.svg" alt="An up arrow" onclick="moveUp('${question.id}')">
                         <img class="control-button" src="img/move-down.svg" alt="A down arrow" onclick="moveDown('${question.id}')">
                         <img class="control-button" src="img/trash.svg" alt="A trash can" onclick="deleteQuestion('${question.id}')">
                     </div>
+                    <label for="${question.id}-prompt" class="field-label prompt-label">Prompt:</label>
+                    <textarea id="${question.id}-prompt"
+                              class="entry prompt-entry"
+                              rows="3"
+                              cols="36"
+                              wrap="soft"
+                              placeholder="Question you'd like answered"
+                              oninput="updatePrompt('${question.id}')">${question.prompt}</textarea>
+                    <label for="${question.id}-type" class="field-label type-label">Type: </label>
+                    <div class="type-wrapper">
+                        <select class="type" id="${question.id}-type" onchange="selectType('${question.id}')">
+                            <option value="short" ${question.type === 'short' ? 'selected' : ''}>Short Answer</option>
+                            <option value="long" ${question.type === 'long' ? 'selected' : ''}>Paragraph</option>
+                            <option value="radio" ${question.type === 'radio' ? 'selected' : ''}>Radio Buttons</option>
+                            <option value="check" ${question.type === 'check' ? 'selected' : ''}>Checkmarks</option>
+                        </select>
+                    </div>
+                    <label for="${question.id}-detail" class="field-label detail-label">Details:</label>
+                    <textarea id="${question.id}-detail"
+                              class="entry detail-entry"
+                              rows="5"
+                              cols="36"
+                              wrap="soft"
+                              placeholder="Details about the question, if needed"
+                              oninput="updateDesc('${question.id}')">${question.desc}</textarea>
                 </div>
                 <div id="${question.id}-content">
+                    <div class="question-label">
+                        Question Content:
+                    </div>
                     ${generateContent(question)}
                 </div>
             </div>`
@@ -212,43 +225,37 @@
         }
 
         function generateRadio(question) {
-            return `<div>
+            return `<div class="question-content">
                 ${question.fields.radio.map(o => generateOption(question.id, 'radio', o)).join('\n')}
                 <div>
-                    <span class="option-type-img-wrapper">
-                        <img class="option-type-image" src="img/radio.svg" aria-hidden="true" alt="">
-                    </span>
+                    <img class="option-image" src="img/radio.svg" aria-hidden="true" alt="">
                     <button class="btn" onclick="addOption('${question.id}', 'radio')">Add Option</button>
                 </div>
             </div>`
         }
 
         function generateCheck(question) {
-            return `<div>
+            return `<div class="question-content">
                 ${question.fields.check.map(o => generateOption(question.id, 'check', o)).join('\n')}
                 <div>
-                    <span class="option-type-img-wrapper">
-                        <img class="option-type-image" src="img/check.svg" aria-hidden="true" alt="">
-                    </span>
+                    <img class="option-image" src="img/check.svg" aria-hidden="true" alt="">
                     <button class="btn" onclick="addOption('${question.id}', 'check')">Add Option</button>
                 </div>
             </div>`
         }
 
         function generateOption(questionId, type, option) {
-            return `<div class="option" xmlns="http://www.w3.org/1999/html">
-                <span class="option-type-img-wrapper">
-                    <img class="option-type-image" src="img/${type}.svg" aria-hidden="true" alt="">
-                </span>
-                <span>
-                    <input id="${option.id}"
-                           class="option-name-input"
-                           type="text"
-                           onchange="updateOption('${questionId}', 'radio', '${option.id}')"
-                    >
-                        ${option.value}
-                    </input>
-                </span>
+            return `<div class="option">
+                <img class="option-image" src="img/${type}.svg" aria-hidden="true" alt="">
+                <input id="${option.id}"
+                       class="option-name-input"
+                       type="text"
+                       onchange="updateOption('${questionId}', '${type}', '${option.id}')"
+                       value="${option.value}"
+                >
+                <button class="delete-option-button" onclick="deleteOption('${questionId}', '${type}', '${option.id}')">
+                    <img class="option-image hover-shadow" src="img/trash.svg" alt="A trash can"/>
+                </button>
             </div>`
         }
 
@@ -266,8 +273,29 @@
 
         function packageForm() {
             const saveLink = document.getElementById("save")
-            const blob = new Blob([JSON.stringify(questionList)])
+            const formDefinition = questionList.map(packageQuestion)
+            const blob = new Blob([JSON.stringify(formDefinition)])
             saveLink.href = URL.createObjectURL(blob)
+        }
+
+        function packageQuestion(question) {
+            let packaged = {
+                prompt: question.prompt,
+                desc: question.desc,
+                type: question.type,
+            };
+
+            if (question.type === 'radio') {
+                packaged.fields = question.fields.radio.map(({value}) => value)
+            } else if (question.type === 'check') {
+                packaged.fields = question.fields.check.map(({value}) => value)
+            }
+
+            return packaged
+        }
+
+        window.onload = () => {
+            addQuestion()
         }
     </script>
 </head>
@@ -292,15 +320,13 @@
     </span>
 </div>
 <div id="content">
-    <div id="name-and-desc">
-
-    </div>
+    <div id="name-and-desc"></div>
     <div id="questions"></div>
     <div id="controls">
-        <button class="control-button" onclick="addQuestion()"><img src="img/add.svg" alt="Circled plus sign"></button>
-        <button class="btn" onclick="packageForm()">Validate Form</button>
-    </div>
-    <div id="save-wrapper">
+        <button id="add-button" class="control-button" onclick="addQuestion()">
+            <img src="img/add.svg" alt="Circled plus sign">
+            <span class="add-button-label">Add&nbsp;Question</span>
+        </button>
         <a id="save" class="btn" href="" download="privform.json" onclick="packageForm()">Download Form Definition</a>
     </div>
 </div>
