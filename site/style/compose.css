@@ -1,0 +1,55 @@
+.question-wrapper {
+
+}
+
+.question-header {
+
+}
+
+.prompt-entry {
+
+}
+
+.type-wrapper {
+
+}
+
+#controls {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.control-button {
+
+}
+
+.question-content {
+
+}
+
+.short-text-box {
+
+}
+
+.option {
+
+}
+
+.option-type-img-wrapper {
+
+}
+
+.option-type-image {
+
+}
+
+.option-name-input {
+
+}
+
+#save-wrapper {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+}

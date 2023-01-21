@@ -45,6 +45,7 @@ fastify.setErrorHandler((error, request, reply) => {
 const STATIC_PATHS = {
     "/": "index.html",
     "/keygen": "keygen.html",
+    "/compose": "compose.html",
     "/404": "404.html",
 
     "/robots.txt": "robots.txt",

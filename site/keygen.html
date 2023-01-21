@@ -38,8 +38,13 @@
             display.style.display = "block"
         }
 
-        function copyToClipboard(elemId) {
-
+        async function copyToClipboard(elemId) {
+            const elem = document.getElementById(elemId);
+            navigator.clipboard.writeText(elem.value)
+                .catch(err => {
+                    console.log(`Failed to copy text: '${elem.value.slice(0, 36)}'`)
+                    console.log(err)
+                })
         }
     </script>
 </head>
@@ -102,6 +107,7 @@
             Share this when you share a link to your form, that way your users can be sure we're not doing something
             sneaky with keys.
         </p>
+        <br/>
         <a href="" id="privkey-dl" class="btn" download="privform-key.json">Download Private Key</a>
     </div>
 </div>

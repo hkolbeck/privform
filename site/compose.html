@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PrivForm</title>
+
+    <link rel="stylesheet" href="/style/common.css"/>
+    <link rel="stylesheet" href="/style/compose.css"/>
+
+    <script>
+        var questionList = [];
+
+        function addQuestion() {
+            const questionId = crypto.randomUUID()
+            questionList.push({
+                id: questionId,
+                prompt: "",
+                desc: "",
+                type: "short",
+                fields: {
+                    radio: [],
+                    check: []
+                }
+            })
+
+            renderQuestions()
+        }
+
+        function selectType(questionId) {
+            let idx = findQuestion(questionId);
+            if (idx < 0) {
+                return
+            }
+
+            const selectStmt = document.getElementById(`${questionId}-type`)
+            questionList[idx].type = selectStmt.value
+
+            renderQuestions()
+        }
+
+        function moveUp(questionId) {
+            let idx = findQuestion(questionId)
+            if (idx <= 0) {
+                return
+            }
+
+            swapQuestions(idx, idx - 1)
+            renderQuestions()
+        }
+        
+        function moveDown(questionId) {
+            let idx = findQuestion(questionId)
+            if (idx < 0 || idx === questionList.length - 1) {
+                return
+            }
+
+            swapQuestions(idx, idx + 1)
+            renderQuestions()
+        }
+
+        function deleteQuestion(questionId) {
+            questionList = questionList.filter(q => q.id !== questionId)
+            renderQuestions()
+        }
+
+        function addOption(questionId, type) {
+            let idx = findQuestion(questionId)
+            if (idx < 0) {
+                return
+            }
+
+            questionList[idx].fields[type].push({
+                id: crypto.randomUUID(),
+                value: ""
+            })
+
+            renderQuestions()
+        }
+
+
+        function swapQuestions(idx, jdx) {
+            let temp = questionList[idx]
+            questionList[idx] = questionList[jdx]
+            questionList[jdx] = temp
+        }
+
+        function findQuestion(questionId) {
+            for (let i = 0; i < questionList.length; i++) {
+                if (questionList[i].id === questionId) {
+                    return i
+                }
+            }
+
+            return -1
+        }
+
+        function updatePrompt(questionId) {
+            let idx = findQuestion(questionId)
+            if (idx < 0) {
+                return
+            }
+
+            const textarea = document.getElementById(`${questionId}-prompt`)
+            questionList[idx].prompt = textarea.value
+        }
+
+        function updateDesc(questionId) {
+            let idx = findQuestion(questionId)
+            if (idx < 0) {
+                return
+            }
+
+            const textarea = document.getElementById(`${questionId}-detail`)
+            questionList[idx].desc = textarea.value
+        }
+
+        function updateOption(questionId, type, optionId) {
+            let idx = findQuestion(questionId)
+            if (idx < 0) {
+                return
+            }
+
+            let options = questionList[idx].fields[type]
+            let optionIdx = findOption(options, optionId)
+            if (optionIdx < 0) {
+                return
+            }
+
+            let optionInput = document.getElementById(optionId);
+            options[optionIdx].value = optionInput.value
+        }
+
+        function findOption(options, optionId) {
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].id === optionId) {
+                    return i
+                }
+            }
+
+            return -1
+        }
+
+        function renderQuestions() {
+            const questions = document.getElementById("questions")
+            while (questions.firstChild) {
+                questions.removeChild(questions.firstChild);
+            }
+
+            for (let question of questionList) {
+                if (question) {
+                    renderQuestion(question)
+                }    
+            }
+        }
+
+        function renderQuestion(question) {
+            const outer = document.createElement("div")
+            outer.id = question.id
+            outer.classList.add("question-wrapper")
+            outer.innerHTML = `<div class="${question.id}-inner-wrapper">
+                <div class="question-header">
+                    <label for="${question.id}-prompt" class="entry-label">Prompt:</label>
+                    <textarea id="${question.id}-prompt"
+                              class="prompt-entry"
+                              rows="3"
+                              cols="36"
+                              wrap="soft"
+                              placeholder="Question you'd like answered"
+                              onchange="updatePrompt('${question.id}')"></textarea>
+                    <br/>
+                    <label for="${question.id}-detail" class="entry-label">Details:</label>
+                    <textarea id="${question.id}-detail"
+                              class="prompt-entry"
+                              rows="5"
+                              cols="36"
+                              wrap="soft"
+                              placeholder="Details about the question, if needed"
+                              onchange="updateDesc('${question.id}')"></textarea>
+                    <br/>
+                    <div class="type-wrapper">
+                        <select id="${question.id}-type" onselect="selectType('${question.id}')">
+                            <option value="short">Short Answer</option>
+                            <option value="long">Paragraph</option>
+                            <option value="radio">Radio Buttons</option>
+                            <option value="check">Checkmarks</option>
+                        </select>
+                    </div>
+                    <div class="question-controls">
+                        <img class="control-button" src="img/move-up.svg" alt="An up arrow" onclick="moveUp('${question.id}')">
+                        <img class="control-button" src="img/move-down.svg" alt="A down arrow" onclick="moveDown('${question.id}')">
+                        <img class="control-button" src="img/trash.svg" alt="A trash can" onclick="deleteQuestion('${question.id}')">
+                    </div>
+                </div>
+                <div id="${question.id}-content">
+                    ${generateContent(question)}
+                </div>
+            </div>`
+
+            const questions = document.getElementById("questions")
+            questions.appendChild(outer)
+        }
+
+        function generateContent(question) {
+            switch (question.type) {
+                case "radio": return generateRadio(question)
+                case "short": return generateShort()
+                case "long": return generateLong()
+                case "check": return generateCheck(question)
+            }
+
+            return `Unknown type: '${question.type}'`
+        }
+
+        function generateRadio(question) {
+            return `<div>
+                ${question.fields.radio.map(o => generateOption(question.id, 'radio', o)).join('\n')}
+                <div>
+                    <span class="option-type-img-wrapper">
+                        <img class="option-type-image" src="img/radio.svg" aria-hidden="true" alt="">
+                    </span>
+                    <button class="btn" onclick="addOption('${question.id}', 'radio')">Add Option</button>
+                </div>
+            </div>`
+        }
+
+        function generateCheck(question) {
+            return `<div>
+                ${question.fields.check.map(o => generateOption(question.id, 'check', o)).join('\n')}
+                <div>
+                    <span class="option-type-img-wrapper">
+                        <img class="option-type-image" src="img/check.svg" aria-hidden="true" alt="">
+                    </span>
+                    <button class="btn" onclick="addOption('${question.id}', 'check')">Add Option</button>
+                </div>
+            </div>`
+        }
+
+        function generateOption(questionId, type, option) {
+            return `<div class="option" xmlns="http://www.w3.org/1999/html">
+                <span class="option-type-img-wrapper">
+                    <img class="option-type-image" src="img/${type}.svg" aria-hidden="true" alt="">
+                </span>
+                <span>
+                    <input id="${option.id}"
+                           class="option-name-input"
+                           type="text"
+                           onchange="updateOption('${questionId}', 'radio', '${option.id}')"
+                    >
+                        ${option.value}
+                    </input>
+                </span>
+            </div>`
+        }
+
+        function generateShort() {
+            return `<div class="question-content">
+                <textarea class="short-text-box" readonly rows="1" cols="36">A short answer</textarea>
+            </div>`
+        }
+
+        function generateLong() {
+            return `<div class="question-content">
+                <textarea class="long-text-box" readonly rows="4" cols="36"> A longer answer </textarea>
+            </div>`
+        }
+
+        function packageForm() {
+            const saveLink = document.getElementById("save")
+            const blob = new Blob([JSON.stringify(questionList)])
+            saveLink.href = URL.createObjectURL(blob)
+        }
+    </script>
+</head>
+<body>
+<div id="header">
+    <span id="logo-wrapper">
+        <a href="https://hannah.industries">
+            <img id="logo" src="img/privform.svg"
+                 alt="The PrivForm logo, a dark blue lock with a heart on the body on a light purple fields"
+            />
+        </a>
+    </span>
+    <span id="title-wrapper">
+        <img id="title" src="img/title.svg"
+             alt="PrivForm.net in a deep blue bubble font with hearts where possible, all outlined in pink"
+        >
+    </span>
+    <span id="email-wrapper">
+        <a href="mailto:admin@privform.net">
+            <img id="email" src="img/email.svg" alt="A stylized envelope">
+        </a>
+    </span>
+</div>
+<div id="content">
+    <div id="name-and-desc">
+
+    </div>
+    <div id="questions"></div>
+    <div id="controls">
+        <button class="control-button" onclick="addQuestion()"><img src="img/add.svg" alt="Circled plus sign"></button>
+        <button class="btn" onclick="packageForm()">Validate Form</button>
+    </div>
+    <div id="save-wrapper">
+        <a id="save" class="btn" href="" download="privform.json" onclick="packageForm()">Download Form Definition</a>
+    </div>
+</div>
+</body>
+</html>
