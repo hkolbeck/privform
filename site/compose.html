@@ -47,7 +47,7 @@
             swapQuestions(idx, idx - 1)
             renderQuestions()
         }
-        
+
         function moveDown(questionId) {
             let idx = findQuestion(questionId)
             if (idx < 0 || idx === questionList.length - 1) {
@@ -160,7 +160,7 @@
             for (let question of questionList) {
                 if (question) {
                     renderQuestion(question)
-                }    
+                }
             }
         }
 
@@ -177,7 +177,7 @@
                     </div>
                     <label for="${question.id}-prompt" class="field-label prompt-label">Prompt:</label>
                     <textarea id="${question.id}-prompt"
-                              class="entry prompt-entry"
+                              class="composer-input prompt-entry"
                               rows="3"
                               cols="36"
                               wrap="soft"
@@ -194,7 +194,7 @@
                     </div>
                     <label for="${question.id}-detail" class="field-label detail-label">Details:</label>
                     <textarea id="${question.id}-detail"
-                              class="entry detail-entry"
+                              class="composer-input detail-entry"
                               rows="5"
                               cols="36"
                               wrap="soft"
@@ -215,10 +215,14 @@
 
         function generateContent(question) {
             switch (question.type) {
-                case "radio": return generateRadio(question)
-                case "short": return generateShort()
-                case "long": return generateLong()
-                case "check": return generateCheck(question)
+                case "radio":
+                    return generateRadio(question)
+                case "short":
+                    return generateShort()
+                case "long":
+                    return generateLong()
+                case "check":
+                    return generateCheck(question)
             }
 
             return `Unknown type: '${question.type}'`
@@ -248,7 +252,7 @@
             return `<div class="option">
                 <img class="option-image" src="img/${type}.svg" aria-hidden="true" alt="">
                 <input id="${option.id}"
-                       class="option-name-input"
+                       class="option-name-input composer-input"
                        type="text"
                        onchange="updateOption('${questionId}', '${type}', '${option.id}')"
                        value="${option.value}"
@@ -261,13 +265,13 @@
 
         function generateShort() {
             return `<div class="question-content">
-                <textarea class="short-text-box" readonly rows="1" cols="36">A short answer</textarea>
+                <textarea class="short-text-box composer-input" readonly rows="1" cols="36">A short answer</textarea>
             </div>`
         }
 
         function generateLong() {
             return `<div class="question-content">
-                <textarea class="long-text-box" readonly rows="4" cols="36"> A longer answer </textarea>
+                <textarea class="long-text-box composer-input" readonly rows="4" cols="36">A longer answer</textarea>
             </div>`
         }
 
@@ -320,7 +324,14 @@
     </span>
 </div>
 <div id="content">
-    <div id="name-and-desc"></div>
+    <div id="name-and-desc">
+        <label id="name-label" class="field-label" for="name-input">Form Name:</label>
+        <textarea id="name-input" class="composer-input" rows="1" cols="36" placeholder="Name of the form" autofocus
+        ></textarea>
+        <label id="desc-label" class="field-label" for="desc-input">Details:</label>
+        <textarea id="desc-input" class="composer-input" rows="3" cols="36" placeholder="Details about the form"
+        ></textarea>
+    </div>
     <div id="questions"></div>
     <div id="controls">
         <button id="add-button" class="control-button" onclick="addQuestion()">
